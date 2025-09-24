@@ -33,9 +33,34 @@ define( 'FACIOJ_TEXTDOMAIN', 'formular-af-citizenone-journalsystem' );
 define( 'FACIOJ_VERSION', '1.2.0' );
 define( 'FACIOJ_MIN_PHP_VERSION', '7.4' );
 define( 'FACIOJ_WP_VERSION', '5.8' );
-define( 'FACIOJ_PLUGIN_API_URL', 'https://appserver.citizenone.dk/api' );
+// define( 'FACIOJ_PLUGIN_API_URL', 'https://appserver.citizenone.dk/api' );
+define( 'FACIOJ_PLUGIN_API_URL', 'http://127.0.0.1:8000/api' );
 define( 'FACIOJ_PLUGIN_API_NAME', 'CitizenOne journalsystem' );
 define( 'FACIOJ_NAME', 'Formular af CitizenOne journalsystem' );
+
+/**
+ * Load the Composer autoloader from the build directory.
+ * This makes all our classes and scoped dependencies available globally
+ * as soon as the plugin file is loaded.
+ */
+$autoloader_path = FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php';
+if ( ! file_exists( $autoloader_path ) ) {
+	// Add a more user-friendly admin notice if possible.
+	if ( is_admin() ) {
+		add_action(
+			'admin_notices',
+			function () {
+				echo '<div class="error"><p>';
+				esc_html_e( 'Formular af CitizenOne journalsystem is not built correctly. Please run the build script and reactivate the plugin.', 'formular-af-citizenone-journalsystem' );
+				echo '</p></div>';
+			}
+		);
+	}
+	// Stop execution if the autoloader is missing.
+	return;
+}
+require_once FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php';
+
 /**
  * The main function that initializes the plugin.
  *
@@ -49,7 +74,7 @@ function facioj_initialize_plugin(): void {
 	require_once FACIOJ_PLUGIN_ROOT . 'functions/debug.php';
 
 	// Check for requirements.
-	$requirements = new \Micropackage\Requirements\Requirements(
+	$requirements = new \mzaworkdk\Citizenone\Dependencies\Micropackage\Requirements\Requirements(
 		__( 'Formular af CitizenOne journalsystem', 'formular-af-citizenone-journalsystem' ),
 		array(
 			'php'            => FACIOJ_MIN_PHP_VERSION,
@@ -64,12 +89,6 @@ function facioj_initialize_plugin(): void {
 		return;
 	}
 
-	// Set up the update checker.
-	\YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-		'https://github.com/AWORK-AS/contact-form-app',
-		FACIOJ_PLUGIN_ABSOLUTE,
-		FACIOJ_TEXTDOMAIN
-	);
 	// Initialize the plugin's core engine.
 	new \mzaworkdk\Citizenone\Engine\Initialize( $facioj_libraries );
 	// Load Contact form block.
@@ -109,21 +128,6 @@ add_action( 'init', 'facioj_initialize_plugin' );
  * @param bool $network_wide Network wide.
  */
 function facioj_activate_plugin( $network_wide ): void {
-	// Double-check if constant is defined.
-	if ( ! defined( 'FACIOJ_PLUGIN_ROOT' ) ) {
-		define( 'FACIOJ_PLUGIN_ROOT', plugin_dir_path( __FILE__ ) );
-	}
-	// Ensure the autoloader is available.
-	if ( ! file_exists( FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php' ) ) {
-		wp_die( esc_html_e( 'Plugin dependencies are missing. Please run composer install.', 'formular-af-citizenone-journalsystem' ) );
-	}
-
-	require_once FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php';
-	// Load the ActDeact class.
-	if ( ! class_exists( '\mzaworkdk\Citizenone\Backend\ActDeact' ) ) {
-		require_once FACIOJ_PLUGIN_ROOT . 'backend/class-actdeact.php';
-	}
-
 	\mzaworkdk\Citizenone\Backend\ActDeact::activate( $network_wide );
 }
 
@@ -133,19 +137,9 @@ function facioj_activate_plugin( $network_wide ): void {
  * @param bool $network_wide Network wide.
  */
 function facioj_deactivate_plugin( $network_wide ): void {
-	// Ensure the autoloader is available.
-	if ( ! file_exists( FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php' ) ) {
-		return;
-	}
-	require_once FACIOJ_PLUGIN_ROOT . 'vendor/autoload.php';
-
-	// Load the ActDeact class.
-	if ( ! class_exists( '\mzaworkdk\Citizenone\Backend\ActDeact' ) ) {
-		require_once FACIOJ_PLUGIN_ROOT . 'backend/class-actdeact.php';
-	}
-
 	\mzaworkdk\Citizenone\Backend\ActDeact::deactivate( $network_wide );
 }
+
 
 // Register activation and deactivation hooks.
 register_activation_hook( FACIOJ_PLUGIN_ABSOLUTE, 'facioj_activate_plugin' );

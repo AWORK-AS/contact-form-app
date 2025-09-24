@@ -51,8 +51,8 @@ class Form_Renderer {
 	 */
 	private function is_hcaptcha_enabled(): bool {
 		$opts                = \facioj_get_settings();
-		$hcaptcha_site_key   = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? '';
-		$hcaptcha_secret_key = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? '';
+		$hcaptcha_site_key   = $opts['facioj_hcaptcha_site_key'] ?? '';
+		$hcaptcha_secret_key = $opts['facioj_hcaptcha_secret_key'] ?? '';
 		return ! empty( $hcaptcha_site_key ) && ! empty( $hcaptcha_secret_key );
 	}
 
@@ -188,7 +188,7 @@ class Form_Renderer {
 	 */
 	private function render_hcaptcha(): void {
 		$opts              = \facioj_get_settings();
-		$hcaptcha_site_key = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? '';
+		$hcaptcha_site_key = $opts['facioj_hcaptcha_site_key'] ?? '';
 		?>
 		<div class="facioj-form-group facioj-form-group--full">
 			<div class="h-captcha" data-sitekey="<?php echo \esc_attr( $hcaptcha_site_key ); ?>"></div>

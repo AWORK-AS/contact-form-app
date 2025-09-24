@@ -23,6 +23,7 @@ grumphp:
       - var_dump(
       - error_log(
       - define( 'FACIOJ_PLUGIN_API_URL', 'http://127.0.0.1:8000/api' )
+      - wp_die(
       triggered_by:
       - php
 ...

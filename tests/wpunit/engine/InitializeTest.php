@@ -34,7 +34,6 @@ class InitializeTest extends \Codeception\TestCase\WPTestCase {
 		$classes   = array();
 		$classes[] = 'mzaworkdk\Citizenone\Internals\PostTypes';
 		$classes[] = 'mzaworkdk\Citizenone\Internals\Shortcode';
-		$classes[] = 'mzaworkdk\Citizenone\Integrations\CMB';
 		$classes[] = 'mzaworkdk\Citizenone\Integrations\Cron';
 		$classes[] = 'mzaworkdk\Citizenone\Integrations\Template';
 		$classes[] = 'mzaworkdk\Citizenone\Integrations\Widgets\My_Recent_Posts_Widget';

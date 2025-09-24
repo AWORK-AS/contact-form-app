@@ -1,28 +1,48 @@
 <?php
+define( 'FACIOJ_PLUGIN_ABSOLUTE', __FILE__ );
+define( 'FACIOJ_PLUGIN_ROOT', __DIR__ );
+define( 'FACIOJ_TEXTDOMAIN', 'formular-af-citizenone-journalsystem' );
+define( 'FACIOJ_VERSION', '1.2.0' );
+define( 'FACIOJ_MIN_PHP_VERSION', '7.4' );
+define( 'FACIOJ_WP_VERSION', '5.8' );
+define( 'FACIOJ_PLUGIN_API_URL', 'http://127.0.0.1:8000/api' );
+define( 'FACIOJ_PLUGIN_API_NAME', 'CitizenOne journalsystem' );
+define( 'FACIOJ_NAME', 'Formular af CitizenOne journalsystem' );
 
-define( 'FAC_PLUGIN_ROOT', __DIR__ );
-define( 'FAC_TEXTDOMAIN', 'formular-af-citizenone' );
-define( 'FAC_NAME', 'Formular af CitizenOne' );
-define( 'FAC_PLUGIN_ABSOLUTE', __DIR__ );
-define( 'FAC_VERSION', '1.0.0' );
 
-// Load CMB2
-define( 'CMB2_DIR', dirname( __DIR__, 2 ) . '/vendor/cmb2/' );
-require_once CMB2_DIR . 'includes/helper-functions.php';
-spl_autoload_register( 'cmb2_autoload_classes' );
 
-// Load Cmb2Grid
-spl_autoload_register( function ( $class ) {
-	$prefix = 'Cmb2Grid\\';
-	$base_dir = dirname( __DIR__, 2 ) . '/vendor/cmb2-grid/';
-	$sep = '/';
-	$length = strlen( $prefix );
-	if ( strncmp( $prefix, $class, $length ) !== 0 ) {
-		return;
-	}
-	$relative_class = substr( $class, $length );
-	$file = $base_dir . str_replace( '\\', $sep, $relative_class ) . '.php';
-	if ( file_exists( $file ) ) {
-		require_once $file;
-	}
-} );
+// Define the prefix you use in scoper.inc.php
+$prefix = 'mzaworkdk\\Citizenone\\Dependencies';
+
+// Define the classes that we know are scoped but are used in the source code.
+// The format is: 'Original\Class\Name' => 'Scoped\Class\Name'
+$class_aliases = [
+    $prefix . '\\Micropackage\\Requirements\\Requirements' => 'Micropackage\\Requirements\\Requirements',
+    $prefix . '\\Inpsyde\\WpContext' => 'Inpsyde\\WpContext',
+	// Add other classes that are directly called in your code here.
+    // For example, if you use WPDesk Notice:
+    // 'WPDesk_Notice' => $prefix . '\\WPDesk_Notice',
+];
+
+// Register the aliases so PHPStan can understand them.
+foreach ( $class_aliases as $original => $alias ) {
+	echo $original.":".$alias."\n";
+    if ( ! class_exists( $original ) && class_exists( $alias ) ) {
+        class_alias( $alias, $original );
+    }
+}
+
+// For classes that you did NOT scope (like I18n_Notice),
+// but PHPStan might look for them with the prefix.
+$global_classes = [
+    'I18n_Notice',
+    'I18n_Notice_WordPressOrg',
+];
+
+foreach ( $global_classes as $class ) {
+    // This ensures that if the scoped version is looked for,
+    // it will point to the global version.
+    if ( ! class_exists( $prefix . '\\' . $class ) && class_exists( $class ) ) {
+        class_alias( $class, $prefix . '\\' . $class );
+    }
+}

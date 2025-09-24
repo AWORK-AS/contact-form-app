@@ -106,10 +106,10 @@ class Enqueue extends Base {
 		// Get plugin options.
 		$options = \facioj_get_settings();
 
-		$color               = $options[ FACIOJ_TEXTDOMAIN . '_color_theme' ] ?? '#205E77';
-		$headline            = $options[ FACIOJ_TEXTDOMAIN . '_headline' ] ?? 'Get in Touch With Us';
-		$hcaptcha_site_key   = $options[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? false;
-		$hcaptcha_secret_key = $options[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? false;
+		$color               = $options['facioj_color_theme'] ?? '#205E77';
+		$headline            = $options['facioj_headline'] ?? 'Get in Touch With Us';
+		$hcaptcha_site_key   = $options['facioj_hcaptcha_site_key'] ?? false;
+		$hcaptcha_secret_key = $options['facioj_hcaptcha_secret_key'] ?? false;
 
 		$hcaptcha_enabled = false;
 
@@ -149,8 +149,8 @@ class Enqueue extends Base {
 	 */
 	protected function load_hcaptcha_script() {
 		$opts                = \facioj_get_settings();
-		$hcaptcha_site_key   = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? false;
-		$hcaptcha_secret_key = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? false;
+		$hcaptcha_site_key   = $opts['facioj_hcaptcha_site_key'] ?? false;
+		$hcaptcha_secret_key = $opts['facioj_hcaptcha_secret_key'] ?? false;
 
 		$hcaptcha_enabled = false;
 

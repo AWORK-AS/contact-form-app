@@ -11,7 +11,7 @@
 
 namespace mzaworkdk\Citizenone\Engine;
 
-use Inpsyde\WpContext;
+use mzaworkdk\Citizenone\Dependencies\Inpsyde\WpContext;
 
 /**
  * Contact Form App Is Methods

@@ -17,7 +17,6 @@ package-lock.json
 phpcs.xml
 phpstan.neon
 grumphp.yml
-codeception.dist.yml
 babel.config.js
 tests.sh
 tsconfig.json
@@ -25,3 +24,5 @@ phpunit.xml
 .*
 *.dist.yml
 *.xml.dist
+scoper.inc.php
+build.sh

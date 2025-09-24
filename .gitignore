@@ -34,6 +34,7 @@ intermediate
 .idea
 cache
 vendor
+build
 tests/_output/
 formular-af-citizenone-journalsystem/vendor/
 tests/_support/_generated/

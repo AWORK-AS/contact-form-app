@@ -87,8 +87,8 @@ class Enqueue extends Base {
 		}
 		// Localize script with hCaptcha settings.
 		$options             = \facioj_get_settings();
-		$hcaptcha_site_key   = $options[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? false;
-		$hcaptcha_secret_key = $options[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? false;
+		$hcaptcha_site_key   = $options['facioj_hcaptcha_site_key'] ?? false;
+		$hcaptcha_secret_key = $options['facioj_hcaptcha_secret_key'] ?? false;
 		$hcaptcha_enabled    = false;
 
 		if ( $hcaptcha_site_key && $hcaptcha_secret_key ) {

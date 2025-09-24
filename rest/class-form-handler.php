@@ -65,6 +65,15 @@ class Form_Handler {
 		$data = $request->get_params();
 		$opts = \facioj_get_settings();
 
+		// Check if already configured.
+		if ( ! $opts ) {
+			return new \WP_Error(
+				'not_configured',
+				__( 'Error occured. Please contact the administrator.', 'formular-af-citizenone-journalsystem' ),
+				array( 'status' => 403 )
+			);
+		}
+
 		// Validate hCaptcha if enabled.
 		$hcaptcha_validation = $this->validate_hcaptcha( $opts, $data );
 
@@ -106,8 +115,8 @@ class Form_Handler {
 	 * @param array $data Data.
 	 */
 	private function validate_hcaptcha( array $opts, array $data ): ?\WP_Error {
-		$hcaptcha_site_key   = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_site_key' ] ?? false;
-		$hcaptcha_secret_key = $opts[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? false;
+		$hcaptcha_site_key   = $opts['facioj_hcaptcha_site_key'] ?? false;
+		$hcaptcha_secret_key = $opts['facioj_hcaptcha_secret_key'] ?? false;
 		$hcaptcha_enabled    = false;
 
 		if ( $hcaptcha_site_key && $hcaptcha_secret_key ) {
@@ -203,7 +212,7 @@ class Form_Handler {
 	 */
 	private function verify_hcaptcha( $token ) {
 		$options    = \facioj_get_settings();
-		$secret_key = $options[ FACIOJ_TEXTDOMAIN . '_hcaptcha_secret_key' ] ?? '';
+		$secret_key = $options['facioj_hcaptcha_secret_key'] ?? '';
 
 		if ( empty( $secret_key ) ) {
 			// Error: No secret key configured.

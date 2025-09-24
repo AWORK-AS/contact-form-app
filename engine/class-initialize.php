@@ -1,6 +1,6 @@
 <?php
 /**
- * Formular af CitizenOne journalsystem
+ * Formular af CitizenOne
  *
  * @package   mzaworkdk\Citizenone
  * @author    Mindell Zamora <mz@awork.dk>
@@ -14,7 +14,7 @@ namespace mzaworkdk\Citizenone\Engine;
 use mzaworkdk\Citizenone\Engine;
 
 /**
- * Formular af CitizenOne journalsystem Initializer
+ * Formular af CitizenOne Initializer
  */
 class Initialize {
 
@@ -73,6 +73,7 @@ class Initialize {
 
 		$this->get_classes( 'Internals' );
 		$this->load_classes();
+		\add_action( 'admin_notices', array( $this, 'display_admin_notices' ) );
 	}
 
 	/**
@@ -185,8 +186,12 @@ class Initialize {
 			$php_files = $this->scandir( $folder );
 			$this->find_classes( $php_files, $folder, $namespacetofind );
 
-			if ( ! WP_DEBUG ) {
-				\wp_die( \esc_html_e( 'Contact Form App is on production environment with missing `composer dumpautoload -o` that will improve the performance on autoloading itself.', 'formular-af-citizenone-journalsystem' ) );
+			// ✅ SOLUTION: Set a transient to show an admin notice.
+			// A transient is a temporary option in the database.
+			// We'll only set it if it doesn't exist yet.
+			if ( false === get_transient( 'facioj_autoloader_not_optimized' ) ) {
+				// We'll set it to expire in one week so it doesn't constantly check.
+				set_transient( 'facioj_autoloader_not_optimized', true, WEEK_IN_SECONDS );
 			}
 
 			return $this->classes;
@@ -266,6 +271,31 @@ class Initialize {
 
 			$sub_php_files = $this->scandir( $folder . '/' . $php_file );
 			$this->find_classes( $sub_php_files, $folder . '/' . $php_file, $base . $php_file . '\\' );
+		}
+	}
+
+	/**
+	 * Display admin notices when needed.
+	 */
+	public function display_admin_notices(): void {
+		// Check if the user has the capability to install plugins.
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
+		// Check if our transient is set.
+		if ( get_transient( 'facioj_autoloader_not_optimized' ) ) {
+			$message = sprintf(
+				// Use esc_html() for security.
+				/* translators: %s is a link to dismiss the notice */
+				\esc_html__( 'For better performance, the Formular af CitizenOne journalsystem plugin recommends regenerating the autoloader. This is a developer-level task. %s', 'formular-af-citizenone-journalsystem' ),
+				// Add a link to dismiss the notice.
+				'<a href="' . esc_url( add_query_arg( 'facioj_dismiss_notice', 'autoloader_warning' ) ) . '">' . esc_html__( 'Dismiss this notice', 'formular-af-citizenone-journalsystem' ) . '</a>'
+			);
+
+			// Show the notice. 'notice-warning' gives a yellow color.
+			echo '<div class="notice notice-warning"><p>' . $message . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			// We'll ignore PHPCS here because we built the $message with escaping.
 		}
 	}
 }
