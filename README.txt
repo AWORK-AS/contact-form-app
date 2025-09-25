@@ -3,7 +3,7 @@ Contributors: mzaworkdk
 Tags: contacts, leads, citizenone
 Requires at least: 5.8
 Tested up to: 6.8
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -119,3 +119,11 @@ All submissions populate in your dashboard > Leads section with timestamp, sourc
 
 = 1.2.0 =
 * phpcs --standard=WordPress passed.
+
+= 1.3.0 =
+* Refactor: Replaced CMB2 dependency with the native WordPress Settings API.
+* Refactor: Removed `yahnis-elsts/plugin-update-checker` dependency to use the WordPress.org update system exclusively.
+* Refactor: Implemented PHP-Scoper to prefix all third-party dependencies, preventing library conflicts.
+* Refactor: Added a Composer autoloader suffix for better isolation.
+* Fix: Resolved multiple PHPStan and PHPCS errors related to type safety and output escaping.
+

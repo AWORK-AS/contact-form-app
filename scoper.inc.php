@@ -39,7 +39,7 @@
 	];
 	return array(
 		// The prefix to apply to all namespaces. Use your unique plugin prefix.
-		'prefix'             => 'mzaworkdk\Citizeone\Dependencies',
+		'prefix'             => 'mzaworkdk\Citizenone\Dependencies',
 		// Files and folders to scope. Typically, you want to scope the 'vendor' directory.
 		'finders'            => array(
 			// @phpstan-ignore class.notFound

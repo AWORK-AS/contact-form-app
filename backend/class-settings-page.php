@@ -88,7 +88,7 @@ class Settings_Page extends Base {
 	 */
 	public function register_settings(): void {
 		// Register the setting. This will create the entry in the wp_options table.
-		register_setting(
+		\register_setting(
 			$this->option_group,
 			$this->option_name,
 			// ✅ Add the sanitization callback.
@@ -98,7 +98,7 @@ class Settings_Page extends Base {
 		);
 
 		// Section 1: Main Settings.
-		add_settings_section(
+		\add_settings_section(
 			'facioj_main_section',
 			__( 'API Credentials', 'formular-af-citizenone-journalsystem' ),
 			// @phpstan-ignore argument.type
@@ -107,7 +107,7 @@ class Settings_Page extends Base {
 		);
 
 		// Section 2: hCaptcha Settings.
-		add_settings_section(
+		\add_settings_section(
 			'facioj_hcaptcha_section',
 			__( 'hCaptcha Settings (Optional)', 'formular-af-citizenone-journalsystem' ),
 			// @phpstan-ignore argument.type
@@ -116,7 +116,7 @@ class Settings_Page extends Base {
 		);
 
 		// Add fields for Main Settings.
-		add_settings_field(
+		\add_settings_field(
 			'facioj_field_email',
 			__( 'Email', 'formular-af-citizenone-journalsystem' ),
 			array( $this, 'render_text_field' ),
@@ -127,7 +127,7 @@ class Settings_Page extends Base {
 				'required' => true,
 			)
 		);
-		add_settings_field(
+		\add_settings_field(
 			'facioj_field_company_cvr',
 			__( 'Company CVR', 'formular-af-citizenone-journalsystem' ),
 			array( $this, 'render_text_field' ),
@@ -138,7 +138,7 @@ class Settings_Page extends Base {
 				'required' => true,
 			)
 		);
-		add_settings_field(
+		\add_settings_field(
 			'facioj_field_company_id',
 			__( 'CitizenOne Company ID', 'formular-af-citizenone-journalsystem' ),
 			array( $this, 'render_text_field' ),
@@ -151,7 +151,7 @@ class Settings_Page extends Base {
 		);
 
 		// Add fields for hCaptcha.
-		add_settings_field(
+		\add_settings_field(
 			'facioj_hcaptcha_secret_key',
 			'hCaptcha ' . __( 'secret key', 'formular-af-citizenone-journalsystem' ),
 			array( $this, 'render_text_field' ),
@@ -159,7 +159,7 @@ class Settings_Page extends Base {
 			'facioj_hcaptcha_section',
 			array( 'id' => 'facioj_hcaptcha_secret_key' )
 		);
-		add_settings_field(
+		\add_settings_field(
 			'facioj_hcaptcha_site_key',
 			'hCaptcha ' . __( 'site key', 'formular-af-citizenone-journalsystem' ),
 			array( $this, 'render_text_field' ),
@@ -197,9 +197,9 @@ class Settings_Page extends Base {
 
 		printf(
 			'<input type="text" id="%s" name="%s" value="%s" class="regular-text"',
-			esc_attr( $args['id'] ),
-			esc_attr( "{$this->option_name}[{$args['id']}]" ), // name attribute.
-			esc_attr( $value )                               // value attribute.
+			\esc_attr( $args['id'] ),
+			\esc_attr( "{$this->option_name}[{$args['id']}]" ), // name attribute.
+			\esc_attr( $value )                               // value attribute.
 		);
 		// Use separate 'if' for conditional attribute.
 		if ( isset( $args['required'] ) && $args['required'] ) {
@@ -238,7 +238,7 @@ class Settings_Page extends Base {
 
 		// Sanitize all fields before returning.
 		foreach ( $new_value as $key => $value ) {
-			$new_value[ $key ] = sanitize_text_field( $value );
+			$new_value[ $key ] = \sanitize_text_field( $value );
 		}
 
 		return $new_value;
@@ -252,9 +252,9 @@ class Settings_Page extends Base {
 	 */
 	private function get_sanitized_submitted_values( array $values ): array {
 		$data = array(
-			'company_cvr' => isset( $values['facioj_field_company_cvr'] ) ? sanitize_text_field( $values['facioj_field_company_cvr'] ) : '',
-			'company_id'  => isset( $values['facioj_field_company_id'] ) ? sanitize_text_field( $values['facioj_field_company_id'] ) : '',
-			'email'       => isset( $values['facioj_field_email'] ) ? sanitize_email( $values['facioj_field_email'] ) : '',
+			'company_cvr' => isset( $values['facioj_field_company_cvr'] ) ? \sanitize_text_field( $values['facioj_field_company_cvr'] ) : '',
+			'company_id'  => isset( $values['facioj_field_company_id'] ) ? \sanitize_text_field( $values['facioj_field_company_id'] ) : '',
+			'email'       => isset( $values['facioj_field_email'] ) ? \sanitize_email( $values['facioj_field_email'] ) : '',
 		);
 		return $data;
 	}
@@ -277,12 +277,11 @@ class Settings_Page extends Base {
 
 		if ( ! is_object( $data ) || ! isset( $data->data ) ) {
 			$error_message = __( 'The API did not accept the provided data. Please check your information and try again.', 'formular-af-citizenone-journalsystem' );
-			add_settings_error( 'facioj_messages', 'api_error', $error_message, 'error' );
+			\add_settings_error( 'facioj_messages', 'api_error', $error_message, 'error' );
 			return false;
 		}
-
 		$success_message = __( '✅ Successfully connected to CitizenOne', 'formular-af-citizenone-journalsystem' );
-		add_settings_error( 'facioj_messages', 'api_success', $success_message, 'updated' ); // 'updated' is the class for green notices.
+		\add_settings_error( 'facioj_messages', 'api_success', $success_message, 'updated' ); // 'updated' is the class for green notices.
 		return $data->data;
 	}
 
@@ -294,15 +293,15 @@ class Settings_Page extends Base {
 	private function has_validation_errors( array $values ): bool {
 		$has_errors = false;
 		if ( empty( $values['company_cvr'] ) ) {
-			add_settings_error( 'facioj_messages', 'cvr_required', __( 'Company CVR is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
+			\add_settings_error( 'facioj_messages', 'cvr_required', __( 'Company CVR is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
 			$has_errors = true;
 		}
 		if ( empty( $values['company_id'] ) ) {
-			add_settings_error( 'facioj_messages', 'id_required', __( 'CitizenOne Company ID is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
+			\add_settings_error( 'facioj_messages', 'id_required', __( 'CitizenOne Company ID is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
 			$has_errors = true;
 		}
 		if ( empty( $values['email'] ) ) {
-			add_settings_error( 'facioj_messages', 'email_required', __( 'Email address is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
+			\add_settings_error( 'facioj_messages', 'email_required', __( 'Email address is required.', 'formular-af-citizenone-journalsystem' ), 'error' );
 			$has_errors = true;
 		}
 		return $has_errors;
@@ -315,7 +314,7 @@ class Settings_Page extends Base {
 	 */
 	public function add_action_links( array $links ): array {
 		// Update the URL to point to the correct menu page.
-		return \array_merge(
+		return array_merge(
 			array(
 				'settings' => '<a href="' . \admin_url( 'admin.php?page=' . FACIOJ_TEXTDOMAIN ) . '">' . \__( 'Settings', 'formular-af-citizenone-journalsystem' ) . '</a>',
 			),
@@ -328,18 +327,18 @@ class Settings_Page extends Base {
 	 */
 	public function display_admin_notices(): void {
 		// Check if the user has the capability to install plugins.
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if ( ! \current_user_can( 'install_plugins' ) ) {
 			return;
 		}
 
 		// Check if our transient is set.
-		if ( get_transient( 'facioj_autoloader_not_optimized' ) ) {
+		if ( \get_transient( 'facioj_autoloader_not_optimized' ) ) {
 			$message = sprintf(
 				// Use esc_html() for security.
 				/* translators: %s is a link to dismiss the notice */
-				esc_html__( 'For better performance, the Formular af CitizenOne plugin recommends regenerating the autoloader. This is a developer-level task. %s', 'formular-af-citizenone-journalsystem' ),
+				\esc_html__( 'For better performance, the Formular af CitizenOne plugin recommends regenerating the autoloader. This is a developer-level task. %s', 'formular-af-citizenone-journalsystem' ),
 				// Add a link to dismiss the notice.
-				'<a href="' . esc_url( add_query_arg( 'facioj_dismiss_notice', 'autoloader_warning' ) ) . '">' . esc_html__( 'Dismiss this notice', 'formular-af-citizenone-journalsystem' ) . '</a>'
+				'<a href="' . \esc_url( \add_query_arg( 'facioj_dismiss_notice', 'autoloader_warning' ) ) . '">' . esc_html__( 'Dismiss this notice', 'formular-af-citizenone-journalsystem' ) . '</a>'
 			);
 
 			// Show the notice. 'notice-warning' gives a yellow color.
@@ -354,7 +353,7 @@ class Settings_Page extends Base {
 	public function handle_notice_dismissal(): void {
 		if ( isset( $_GET['facioj_dismiss_notice'] ) && 'autoloader_warning' === $_GET['facioj_dismiss_notice'] ) { //phpcs:ignore
 			// Remove the transient so the notice doesn't appear again.
-			delete_transient( 'facioj_autoloader_not_optimized' );
+			\delete_transient( 'facioj_autoloader_not_optimized' );
 		}
 	}
 
@@ -368,22 +367,23 @@ class Settings_Page extends Base {
 		$new_input = array();
 		// Sanitize each expected field.
 		if ( isset( $input['facioj_field_email'] ) ) {
-			$new_input['facioj_field_email'] = sanitize_email( $input['facioj_field_email'] );
+			$new_input['facioj_field_email'] = \sanitize_email( $input['facioj_field_email'] );
 		}
 		if ( isset( $input['facioj_field_company_cvr'] ) ) {
-			$new_input['facioj_field_company_cvr'] = sanitize_text_field( $input['facioj_field_company_cvr'] );
+			$new_input['facioj_field_company_cvr'] = \sanitize_text_field( $input['facioj_field_company_cvr'] );
 		}
 		if ( isset( $input['facioj_field_company_id'] ) ) {
-			$new_input['facioj_field_company_id'] = sanitize_text_field( $input['facioj_field_company_id'] );
+			$new_input['facioj_field_company_id'] = \sanitize_text_field( $input['facioj_field_company_id'] );
 		}
 		if ( isset( $input['facioj_hcaptcha_secret_key'] ) ) {
-			$new_input['facioj_hcaptcha_secret_key'] = sanitize_text_field( $input['facioj_hcaptcha_secret_key'] );
+			$new_input['facioj_hcaptcha_secret_key'] = \sanitize_text_field( $input['facioj_hcaptcha_secret_key'] );
 		}
 		if ( isset( $input['facioj_hcaptcha_site_key'] ) ) {
-			$new_input['facioj_hcaptcha_site_key'] = sanitize_text_field( $input['facioj_hcaptcha_site_key'] );
+			$new_input['facioj_hcaptcha_site_key'] = \sanitize_text_field( $input['facioj_hcaptcha_site_key'] );
 		}
-
-		// The token will be added in pre_update_option, so it's not included here.
+		if ( isset( $input[ FACIOJ_TEXTDOMAIN . '_token' ] ) ) {
+			$new_input[ FACIOJ_TEXTDOMAIN . '_token' ] = \sanitize_text_field( $input[ FACIOJ_TEXTDOMAIN . '_token' ] );
+		}
 
 		return $new_input;
 	}

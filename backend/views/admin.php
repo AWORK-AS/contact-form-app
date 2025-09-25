@@ -21,7 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wrap">
 
 	<h2><?php esc_html_e( 'Formular af CitizenOne journalsystem', 'formular-af-citizenone-journalsystem' ); ?></h2>
-
+	<?php
+		settings_errors( 'facioj_messages' );
+	?>
 	<div id="tabs" class="settings-tab">
 		<ul>
 			<li><a href="#tabs-1"><?php esc_html_e( 'Configuration', 'formular-af-citizenone-journalsystem' ); ?></a></li>
@@ -34,10 +36,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<div class="right-column-settings-page metabox-holder">
-		
+
 			<?php
 			require_once plugin_dir_path( __FILE__ ) . 'connection-svg.php';
 			?>
-		
+
 	</div>
 </div>

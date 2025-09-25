@@ -33,7 +33,7 @@ jobs:
         tools: composer
 
     - name: Install Composer dependencies (production only)
-      run: composer install --no-dev --optimize-autoloader
+      run: ./build.sh
 
     - name: Create plugin ZIP file
       run: |
