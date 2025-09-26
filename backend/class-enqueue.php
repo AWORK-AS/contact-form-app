@@ -28,8 +28,59 @@ class Enqueue extends Base {
 			return;
 		}
 		// Register and enqueue assets.
-		\add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		\add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_settings_page_assets' ) );
 		\add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+	}
+
+	/**
+	 * Enqueue assets ONLY for the plugin's settings page.
+	 *
+	 * @param string $hook_suffix The hook suffix of the current admin page.
+	 * @return void
+	 */
+	public function enqueue_settings_page_assets( $hook_suffix ) {
+		// The $hook_suffix for a top-level menu page is 'toplevel_page_{page_slug}'.
+		// This is the most reliable way to target a specific admin page.
+		$settings_page_hook = 'toplevel_page_formular-af-citizenone-journalsystem';
+
+		// If we're not on the correct page, don't proceed.
+		if ( $hook_suffix !== $settings_page_hook ) {
+			return;
+		}
+
+		// Now that we're sure we're on the correct page, let's enqueue everything needed.
+
+		// Enqueue admin styles.
+		\wp_enqueue_style(
+			FACIOJ_TEXTDOMAIN . '-admin-style',
+			\plugins_url( 'assets/build/plugin-admin.css', FACIOJ_PLUGIN_ABSOLUTE ),
+			array( 'dashicons' ),
+			FACIOJ_VERSION
+		);
+
+		\wp_enqueue_style(
+			FACIOJ_TEXTDOMAIN . '-settings-style',
+			\plugins_url( 'assets/build/plugin-settings.css', FACIOJ_PLUGIN_ABSOLUTE ),
+			array( 'dashicons' ),
+			FACIOJ_VERSION
+		);
+
+		// Enqueue admin scripts.
+		\wp_enqueue_script(
+			FACIOJ_TEXTDOMAIN . '-settings-admin',
+			\plugins_url( 'assets/build/plugin-admin.js', FACIOJ_PLUGIN_ABSOLUTE ),
+			array(),
+			FACIOJ_VERSION,
+			true
+		);
+
+		\wp_enqueue_script(
+			FACIOJ_TEXTDOMAIN . '-settings-script',
+			\plugins_url( 'assets/build/plugin-settings.js', FACIOJ_PLUGIN_ABSOLUTE ),
+			array( 'jquery-ui-tabs' ),
+			FACIOJ_VERSION,
+			true
+		);
 	}
 
 	/**

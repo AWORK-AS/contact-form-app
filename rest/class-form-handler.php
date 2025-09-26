@@ -34,7 +34,7 @@ class Form_Handler {
 			'/submit',
 			array(
 				'methods'             => 'POST',
-				'callback'            => array( $this, 'handle_form_submission' ),
+				'callback'            => array( $this, 'facioj_handle_form_submission' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
 					'_wpnonce' => array(
@@ -54,7 +54,7 @@ class Form_Handler {
 	 * @param \WP_REST_Request $request WP Rest Request.
 	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
 	 */
-	public function handle_form_submission( WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
+	public function facioj_handle_form_submission( WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		// Verify nonce.
 		$nonce_verification = $this->verify_nonce( $request );
 

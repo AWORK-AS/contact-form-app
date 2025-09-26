@@ -17,6 +17,19 @@ use mzaworkdk\Citizenone\Engine\Base;
  * Enqueue stuff on the frontend
  */
 class Enqueue extends Base {
+	/**
+	 * The shortcode name.
+	 *
+	 * @var string Shortcode name.
+	 */
+	private $shortcode_tag = 'facioj_citizenone_form';
+
+	/**
+	 * The block name
+	 *
+	 * @var string Block name.
+	 */
+	private $block_name = 'formular-af-citizenone-journalsystem/contact-form';
 
 	/**
 	 * Initialize the class.
@@ -25,13 +38,31 @@ class Enqueue extends Base {
 	 */
 	public function initialize() {
 		parent::initialize();
+		// We will change the hook from 'wp_enqueue_scripts' to 'wp'.
+		// The 'wp' hook runs after the $post object has been set up.
+		\add_action( 'wp', array( $this, 'conditionally_enqueue_assets' ) );
+	}
 
-		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		// Use a later hook for localization.
-		\add_action( 'wp_footer', array( $this, 'localize_scripts' ), 5 );
+	/**
+	 * Checks if the shortcode or block exists before enqueueing assets.
+	 *
+	 * @return void
+	 */
+	public function conditionally_enqueue_assets() {
+		// Get the global post object.
+		global $post;
+		if ( ! isset( $post->post_content ) ) {
+			return;
+		}
 
-		// Load hCaptcha.
-		$this->load_hcaptcha_script();
+		if (
+			\has_shortcode( $post->post_content, $this->shortcode_tag )
+			|| has_block( $this->block_name, $post->post_content )
+			) {
+			\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+			// Use a later hook for localization.
+			\add_action( 'wp_footer', array( $this, 'localize_scripts' ), 5 );
+		}
 	}
 
 	/**
@@ -89,6 +120,8 @@ class Enqueue extends Base {
 			10,
 			2
 		);
+		// Load hCaptcha.
+		$this->load_hcaptcha_script();
 	}
 
 	/**

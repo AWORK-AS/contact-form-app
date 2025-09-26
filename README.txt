@@ -127,3 +127,10 @@ All submissions populate in your dashboard > Leads section with timestamp, sourc
 * Refactor: Added a Composer autoloader suffix for better isolation.
 * Fix: Resolved multiple PHPStan and PHPCS errors related to type safety and output escaping.
 
+= 1.3.1 - 2025-09-26 =
+* **Fix:** Resolved a JavaScript conflict by using `window.addEventListener` instead of `window.onload`. This prevents form submission failures when another plugin is active on the same page.
+* **Tweak:** Prefixed the REST API callback function to ensure uniqueness and prevent potential conflicts with other plugins.
+* **Optimization:** Frontend assets (CSS/JS) are now loaded conditionally, only on pages where the form block or shortcode is present.
+* **Optimization:** Backend assets are now loaded strictly on the plugin's own settings page, reducing unnecessary load across the WordPress admin area.
+
+
